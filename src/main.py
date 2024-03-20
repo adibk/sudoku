@@ -111,7 +111,12 @@ def exit_main():
 def main():
     sdk = generate_rand_sdk()
 
-    print_sdk(sdk, 5, 3, 3, vert='|', horz='=', cross='x', sep_clr=clrs.get_256_clr_code(167), clr=clrs.get_256_bg_clr_code(95)+clrs.get_256_clr_code(230))
+    print_sdk(sdk, 5, 3, 3, 
+              vert='|',
+              horz='=',
+              cross='x',
+              sep_clr=clrs.get_256_clr_code(167),
+              clr=clrs.get_256_bg_clr_code(95)+clrs.get_256_clr_code(230))
     print_res(is_valid_sdk(sdk))
     sdk = expls.bad_square_exple()
     

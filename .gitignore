@@ -46,8 +46,8 @@ venv/
 
 # Data
 # data/
-html/
-# csv/
+# html/
+csv/
 *.csv
 
 # Media files
