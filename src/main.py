@@ -4,6 +4,7 @@ from examples import expls
 from utils import colors as clrs
 from utils.colors import clr
 from utils.colors import Color
+
 from utils import tools as tls
 from utils.tools import N
 from utils.debug import TEST
@@ -24,27 +25,30 @@ def get_kwargs(defaults, **kwargs):
         ret[key] = value if key not in kwargs else kwargs[key]
     return ret
 
-def get_sep_from_kwargs(**kwargs):
+def get_args_from_kwargs(**kwargs):
     sep = get_kwargs({'vert': '|', 'horz': '-', 'cross': '+'}, **kwargs)
-    sep_clr = Color.BRIGHT_BLUE if 'clr' not in kwargs else kwargs['clr']
-    return clrs.clr_dict(sep, sep_clr)
+    sep_clr = Color.BRIGHT_BLUE if 'sep_clr' not in kwargs else kwargs['sep_clr']
+    txt_clr = Color.BRIGHT_BLACK if 'clr' not in kwargs else kwargs['clr']
+    return {**clrs.clr_dict(sep, sep_clr), 'clr': txt_clr}
 
 def sdk_to_l_str(sdk, **kwargs):
-    sep = get_sep_from_kwargs(**kwargs)
-    
+    args = get_args_from_kwargs(**kwargs)
+
     cp = ['' for _ in range(11)]
     off = 0
     for i, l in enumerate(sdk):
         if i == 3 or i == 6:
             for j in range(19): 
-                cp[i + off] += sep['horz']
+                cp[i + off] += args['horz']
                 if j == 5 or j == 12:
-                    cp[i + off] += sep['cross']
+                    cp[i + off] += args['cross']
             off += 1
         for x, n in enumerate(l):
-            cp[i + off] += str(n) + ' '
+            space = ' ' if x < len(l) - 1 else ''
+            # space = ' '
+            cp[i + off] += clr(str(n) + space, args['clr'])
             if x == 2 or x == 5:
-                cp[i + off] += sep['vert'] + ' '
+                cp[i + off] += args['vert'] + clr(' ', args['clr'])
     return cp
 
 def print_sdk(sdk, indent=2, marg_top=1, marg_bot=1, **kwargs):
@@ -107,7 +111,7 @@ def exit_main():
 def main():
     sdk = generate_rand_sdk()
 
-    print_sdk(sdk, 5, 3, 3, vert='|', horz='=', cross='x', clr=Color.BRIGHT_CYAN)
+    print_sdk(sdk, 5, 3, 3, vert='|', horz='=', cross='x', sep_clr=clrs.get_256_clr_code(167), clr=clrs.get_256_bg_clr_code(95)+clrs.get_256_clr_code(230))
     print_res(is_valid_sdk(sdk))
     sdk = expls.bad_square_exple()
     
@@ -115,5 +119,8 @@ def main():
     print_res(is_valid_sdk(sdk))
     N()
     
+    # clrs.list_256_clrs()
+    
 if __name__ == "__main__":
     main()
+    
