@@ -2,6 +2,8 @@
 # Terminal Colors
 ##################################################################################################################################
 
+import re
+
 class Color:
     # ANSI escape sequences for text colors
     END = '\033[0m'
@@ -104,6 +106,32 @@ def get_256_bg_clr_code(n):
     if 0 <= n <= 255:
         return f"\033[48;5;{n}m"
     return None
+
+def rm_clr(clrd_str):
+    """
+    Removes ANSI escape sequences from the given clrd_str.
+
+    :param clrd_str: The clrd_str from which to remove ANSI escape sequences.
+    :return: The clrd_str without ANSI escape sequences.
+    """
+    # ANSI escape sequence regex pattern
+    ansi_escape_pattern = re.compile(
+        r'''
+        \x1B  # ESC
+        (?:   # 7-bit C1 Fe (except CSI)
+            [@-Z\\-_]
+        |     # or [ for CSI, followed by a control sequence
+            \[
+            [0-?]*  # Parameter bytes
+            [ -/]*  # Intermediate bytes
+            [@-~]   # Final byte
+        )
+        ''',
+        re.VERBOSE
+    )
+    if not isinstance(clrd_str, str):
+        return clrd_str
+    return ansi_escape_pattern.sub('', clrd_str)
 
 def str_clr(s, clr=None):
     clr = clr if clr != None else Color.BRIGHT_RED 

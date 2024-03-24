@@ -34,3 +34,23 @@ def extract_nbs_as_positive(text):
     positive_ints = [int(nb) for nb in nbs]
     
     return positive_ints
+
+def extract_numbers_and_chars(text, *chars):
+    """
+    Extracts all numbers as positive integers and specific characters from a given text.
+    
+    :param text: The input string to extract from.
+    :param chars: Variable length argument list of characters to extract from the text.
+    :return: A list of positive integers and specified characters found in the text.
+    """
+    pattern = r"\d+|" + "|".join(re.escape(char) for char in chars)
+    matches = re.findall(pattern, text)
+    extracted = [int(match) if match.isdigit() else match for match in matches if match.isdigit() or match in chars]
+    
+    new_lst = []
+    for elem in extracted:
+        if isinstance(elem, int) and str(elem) in chars:
+            new_lst.append(str(elem))
+        else:
+            new_lst.append(elem)
+    return new_lst
