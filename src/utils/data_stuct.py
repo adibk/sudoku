@@ -1,3 +1,5 @@
+import copy
+
 # =============================================================================
 # Mix Data structure
 # =============================================================================
@@ -43,13 +45,27 @@ def replace_in_nested_lists_cp(list_, old, new_):
     :param new_: The value to replace with.
     :return: `cp`, modified copy of `list_` 
     """
-    cp = list_
+    cp = copy.deepcopy(list_)
+    
     for i in range(len(cp)):
         if cp[i] == old:
             cp[i] = new_
         elif isinstance(cp[i], list):
             replace_in_nested_lists(cp[i], old, new_)
+
+    # print(cp)
+    # print(list_)
+    
     return cp
+
+
+def replace_others_in_nestlists(list_, to_keep, new_):
+
+    for i in range(len(list_)):
+        if isinstance(list_[i], list):
+            replace_others_in_nestlists(list_[i], to_keep, new_)
+        elif list_[i] not in to_keep:
+            list_[i] = new_
 
 def has_duplicates(list_, exclude=None):
     """

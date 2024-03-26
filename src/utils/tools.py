@@ -43,7 +43,7 @@ def strip_tags(html_str):
 
 def get_kwargs(defaults, **kwargs):
     '''
-    :return: go through defaults values and return a dict. with the
+    :return: go through `defaults` keys and return a dict. with the
     `key: value` from `kwargs` if `key` found in `kwargs`, otherwise
     `key: value` from `defaults`
     

@@ -30,3 +30,6 @@ def perfect_sqrt(nb):
             right = mid - 1
 
     return None
+
+def is_perfect_sqrt(nb):
+    return perfect_sqrt(nb) != None
