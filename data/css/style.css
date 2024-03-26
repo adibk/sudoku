@@ -1,0 +1,75 @@
+:root {
+    --brd: 2px solid #566eb1;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #b8dbff;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #43568a;
+}
+
+.sudoku-title {
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    /* color: #566eb1; */
+    color: #f4fdff;
+    text-shadow:  0 0 6px #3b627a74;
+    margin: 0 0 20px 0; /* Adds some space between the title and the Sudoku grid */
+    font-weight: normal;
+    font-size: 32px; /* Adjust the size as needed */
+    letter-spacing: 1px; /* Subtle spacing between letters for a refined look */
+    padding: 0 0 80px 0;
+}
+
+.sudoku-container {
+    padding: 20px;
+    background-color: #f4fdff;
+    
+    box-shadow: 3 3 10px rgba(225, 222, 222, 0.5);
+    box-shadow: 0 0 10px #3b627a74;
+    margin: 0 0 80px 0;
+}
+
+.sudoku-grid {
+    background-color: #fff;
+    border-collapse: collapse;
+    border: var(--brd); /* Encloses the entire grid */
+}
+
+.sudoku-grid td {
+    border: 1px solid #566eb182;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 24px;
+    line-height: 50px;
+}
+
+/* Add thick borders for Sudoku subgrids */
+.sudoku-grid tr:nth-child(3n) td {
+    border-bottom: var(--brd);
+}
+
+.sudoku-grid td:nth-child(3n) {
+    border-right: var(--brd);
+}
+
+/* Apply top border to the first row */
+.sudoku-grid tr:first-child td {
+    border-top: var(--brd);
+}
+
+/* Apply left border to the first cell of each row */
+.sudoku-grid td:first-child {
+    border-left: var(--brd);
+}
+
+.highlight {
+    background-color: #e0f2fe; /* Or any color you prefer */
+    color: #005170;
+}
