@@ -54,3 +54,9 @@ def extract_numbers_and_chars(text, *chars):
         else:
             new_lst.append(elem)
     return new_lst
+
+# import utils.data_stuct as ds
+# test = "str 0 1 3 str  2 4 df 4 ccc 344 0 2 str stts 0"
+# l = extract_numbers_and_chars(test, 'str', 't')
+# l = ds.remove_all(l, [0, 3, 'str'])
+# print(l)

@@ -11,6 +11,11 @@ import copy
 # =============================================================================
 
 
+def remove_all(list_, items):
+    if not isinstance(items, list):
+        items = [items]
+    return [x for x in list_ if x not in items]
+
 def chunk_list(list_, chunk_size):
     """
     Splits the input list into smaller lists (chunks) of a specified size.

@@ -1,4 +1,5 @@
 import time
+import random
 
 from utils import calculus as cal
 from utils import tools as tls
@@ -20,17 +21,17 @@ from examples import expls
 
 
 class Grid():
-    def __init__(self, input=None, empty_text='.', size=3, empty_lines=None):
+    def __init__(self, input=None, empty_text='0', empty_lines=None):
         self._text = None
         self._lines = None
-        self._size = size
+        self._size = None
         self._length = None
         self._empty_text = None
         self._empty_lines = None
         
         self.set_empty_text(empty_text)
         self.set_empty_lines(empty_lines)
-
+        
         if isinstance(input, str):
             self.text = input
         elif isinstance(input, list):
@@ -61,6 +62,12 @@ class Grid():
     @property
     def size(self):
         return self._size
+    
+    @lines.setter
+    def lines(self, new_lines):
+        self.replace_in_lines(new_lines)
+        self.set_lines(new_lines)
+        self._text = None
         
     @property
     def length(self):
@@ -74,12 +81,6 @@ class Grid():
     def empty_text(self, new_empty_text):
         self.set_empty_text(new_empty_text)
     
-    @lines.setter
-    def lines(self, new_lines):
-        self.replace_in_lines(new_lines)
-        self.set_lines(new_lines)
-        self._text = None
-    
     @property
     def empty_lines(self):
         return self._empty_lines
@@ -92,7 +93,7 @@ class Grid():
         # print('set_lines')
         length = len(new_lines)
         error_msg = (
-            f"{self.__class__.__name__}.my_method "
+            f"{self.__class__.__name__}.{self.set_lines.__name__} "
             f"expects a list of lists, length X * X"
         )
         
@@ -105,37 +106,37 @@ class Grid():
         self._lines = new_lines
         self.set_size_length()
 
-    def replace_in_lines(self, lines):
-        ds.replace_others_in_nestlists(lines, [i for i in range(1, 10)], self.empty_lines)
-    
+    def is_number_not_zero(self, s):
+        if s == None:
+            return False
+        try:
+            num = int(s)
+            return num != 0
+        except ValueError:
+            return False
+
+    def check_if_nb(self, s, name):
+        if self.is_number_not_zero(s):
+            raise ValueError(f'`{name}` cannot be [1-9]')
+
     def set_empty_text(self, empty_text):
         # print('set empty_text')
-        if empty_text in [str(i) for i in range(1, 10)]:
-            raise ValueError(f'`empty_text` cannot be [1-9]')
+        if not isinstance(empty_text, str):
+            error_msg = (
+                f"{self.__class__.__name__}.{self.set_empty_text.__name__} "
+                f"expects a str, "
+                f"got {type(empty_text).__name__} instead."
+            )
+            raise TypeError(error_msg)
+        self.check_if_nb(empty_text, 'empty_text')
         self._empty_text = empty_text
             
     def set_empty_lines(self, empty_lines):
         # print('set empty_line')
-        if isinstance(empty_lines, int) and 1 <= empty_lines <= 9:
-            raise ValueError(f'`empty_lines` cannot be [1-9]')
-        
+        self.check_if_nb(empty_lines, 'empty_lines')
         self._empty_lines = empty_lines
         if self.lines != None:
             self.replace_in_lines(self._lines)
-    
-    def str_to_lines(self, text, **kwargs):
-        if text == None:
-            return None
-        args = tls.get_kwargs({
-            'empty': self.empty_text,
-            'replace': self.empty_lines,
-            'size': self.size
-        }, **kwargs)
-        
-        l = rgx.extract_numbers_and_chars(text, args['empty'])
-        ds.replace_in_nested_lists(l, args['empty'], args['replace'])
-        chunked = ds.chunk_list(l, args['size'] * args['size'])
-        return chunked
     
     def set_size_length(self):
         # print('set_size_length')
@@ -143,6 +144,159 @@ class Grid():
             self._size = cal.perfect_sqrt(len(self.lines))
             self._length = self._size * self._size
 
+    def lines_to_str_status(self):
+        return '\n'.join(str(sublist) for sublist in self.lines)
+    
+    def status(self, text_clr=Color.BRIGHT_BLUE):
+        status = (
+            f"{clr('Text', text_clr)}\n{str(self.text)}\n\n"
+            f"{clr('Lines', text_clr)}\n{str(self.lines_to_str_status())}\n\n"
+            f"{clr('Size: ', text_clr):<30}{str(self.size)}\n"
+            f"{clr('Length: ', text_clr):<30}{str(self.length)}\n"
+            f"{clr('Empty_text: ', text_clr):<30}{str(self.empty_text)}\n"
+            f"{clr('Empty_lines: ', text_clr):<30}{str(self.empty_lines)}\n"
+        )
+        return status
+    
+    def show_status(self, text_clr=Color.BRIGHT_BLUE):
+        print(self.status(text_clr))
+
+    def replace_in_lines(self, lines):
+        ds.replace_others_in_nestlists(lines, [i for i in range(1, 10)], self.empty_lines)
+    
+    def guess_size(self, list_):
+        return cal.perfect_sqrt(cal.perfect_sqrt(len(list_)))
+    
+    def str_to_lines(self, text, **kwargs):
+        if text == None:
+            return None
+    
+        args = tls.get_kwargs({
+            'empty': self.empty_text,
+            'replace': self.empty_lines,
+            'size': self.size
+        }, **kwargs)
+        
+        l = rgx.extract_numbers_and_chars(text, args['empty'])
+        l = ds.remove_all(l, 0)
+        
+        if self.size == None:
+            args['size'] = self.guess_size(l)
+        if args['size'] == None:
+            error_msg = 'Cannot extract a square from the text input given'
+            raise ValueError(error_msg)
+                
+        ds.replace_in_nested_lists(l, args['empty'], args['replace'])
+        chunked = ds.chunk_list(l, args['size'] * args['size'])
+        return chunked
+
+
+
+# =============================================================================
+# Generate Grid
+# =============================================================================
+
+
+class CheckGrid:
+    def __init__(self):
+        pass
+    
+    @staticmethod
+    def run(lines):
+        print(lines)
+        lines = ds.apply_funcs_to_lists(lines, [clrs.rm_clr, int], [None])
+        # print(lines)
+        # time.sleep(10)
+        for i, l in enumerate(lines):
+            if ds.has_duplicates(l, [None]):
+                # print(i, l, '\nligne FALSE')
+                return False
+            # else:
+            #     print(l)
+            
+        for y in range(9):
+            col = [lines[x][y] for x in range(9)]
+            if ds.has_duplicates(col, [None]):
+                # print(i, col, '\ncol FALSE')
+                return False
+
+        for i in range(9):
+            square = [lines[i - i % 3 + x][(i * 3) % 9 + y] for y in range(3) for x in range(3)]
+            if ds.has_duplicates(square, [None]):
+                # print(i, col, '\nsquare FALSE')
+                return False
+
+
+class CreaGrid:
+    def __init__(self, size=3, difficulty=1, empty_lines='0', uniqueness=True):
+        self._size = None
+        self._length = None
+        self.difficulty = difficulty
+        self.empty_lines = empty_lines
+        self.uniqueness = uniqueness
+        
+        self.grid = Grid()
+        self.max_size = 5
+        self.size = size
+
+    @property
+    def size(self):
+        return self._size
+    
+    @size.setter
+    def size(self, new_size):
+        if not isinstance(new_size, int) or not 2 < new_size <= self.max_size:
+            error_msg = f'Size must be int between 2 and {self.max_size}'
+            raise ValueError(error_msg)
+        self._size = new_size
+        self._length = self.size * self.size
+
+    @property
+    def length(self):
+        return self._length
+    
+    @length.setter
+    def length(self, new_length):
+        max_ = self.max_size * self.max_size
+        sqrt = cal.perfect_sqrt(new_length)
+        if (not isinstance(new_length, int)
+            or not 4 <= new_length <= max_ or sqrt == None):
+            error_msg = (
+                f'Length must be an int between 4 and {max_} '
+                f'and a perfect square'
+            )
+            raise ValueError(error_msg)
+        self._length = new_length
+        self._size = sqrt
+
+    def rand(self, size=None):
+        size = tls.if_none(size, self.size)
+        length = size * size
+        
+        lines = []
+        for i in range(length):
+            row = []
+            for i in range(length):
+                n = random.randint(0, length)
+                row.append(n)
+            lines.append(row)
+        print(lines)
+        self.grid.lines = lines 
+        return self.grid
+
+    def status(self, text_clr=Color.BRIGHT_BLUE):
+        status = (
+            f"{clr('Size: ', text_clr):<30}{str(self.size)}\n"
+            f"{clr('Max size: ', text_clr):<30}{str(self.max_size)}\n"
+            f"{clr('Length: ', text_clr):<30}{str(self.length)}\n"
+            f"{clr('Difficulty: ', text_clr):<30}{str(self.difficulty)}\n"
+            f"{clr('Empty_lines: ', text_clr):<30}{str(self.empty_lines)}\n"
+            f"{clr('Uniqueness: ', text_clr):<30}{str(self.uniqueness)}\n"
+        )
+        return status
+    
+    def show_status(self, text_clr=Color.BRIGHT_BLUE):
+        print(self.status(text_clr))
 
 
 # =============================================================================
@@ -172,7 +326,7 @@ class Sdk:
     def set_style(self, style):
         if not isinstance(style, Style):
             error_msg = (
-                f"{self.__class__.__name__}.my_method "
+                f"{self.__class__.__name__}.{self.set_style.__name__} "
                 f"expects an instance of Style, "
                 f"got {type(style).__name__} instead."
             )
@@ -182,7 +336,7 @@ class Sdk:
     def set_grid(self, grid):
         if not isinstance(grid, Grid):
             error_msg = (
-                f"{self.__class__.__name__}.my_method "
+                f"{self.__class__.__name__}.{self.set_grid.__name__} "
                 f"expects an instance of Grid, "
                 f"got {type(grid).__name__} instead."
             )
@@ -277,7 +431,7 @@ class SdkHandler:
         print('\nsolving\n')
         self.solve_sdk()
         
-    def is_valid_sdk_2(self, sdk):
+    def is_valid_sdk(self, sdk):
         # print(sdk)
         sdk = ds.apply_funcs_to_lists(sdk, [clrs.rm_clr, int], [None])
         # print(sdk)
@@ -328,7 +482,7 @@ class SdkHandler:
             tls.clear_screen()
             
             self.sdk.show()
-            ret = self.is_valid_sdk_2(sdk)
+            ret = self.is_valid_sdk(sdk)
             time.sleep(0.05)
             
 

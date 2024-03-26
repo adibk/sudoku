@@ -13,7 +13,7 @@ def perfect_sqrt(nb):
     - int or None: The square root of the nb if it's a perfect square,
     otherwise None.
     """
-    if nb < 0:
+    if  nb == None or nb < 0:
         return None
     if nb == 0 or nb == 1:
         return nb
