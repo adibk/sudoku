@@ -205,7 +205,8 @@ class CheckGrid:
     def rows(lines, empty_line=0):
         for i, l in enumerate(lines):
             if ds.has_duplicates(l, [empty_line]):
-                print(i, l, '\nligne FALSE')
+                # Debug
+                # print(i, l, '\nligne FALSE')
                 return False
         return True
 
@@ -214,7 +215,8 @@ class CheckGrid:
         for y in range(9):
             col = [lines[x][y] for x in range(9)]
             if ds.has_duplicates(col, [empty_line]):
-                print(y, col, '\ncol FALSE')
+                # Debug
+                # print(y, col, '\ncol FALSE')
                 return False
         return True
 
@@ -224,7 +226,7 @@ class CheckGrid:
             square = [lines[i - i % 3 + x][(i * 3) % 9 + y] for y in range(3) for x in range(3)]
             if ds.has_duplicates(square, [empty_line]):
                 # Debug
-                print(i, square, '\nsquare FALSE')
+                # print(i, square, '\nsquare FALSE')
                 return False
         return True
     
@@ -240,14 +242,14 @@ class CheckGrid:
 
 
 class CreaGrid:
-    def __init__(self, size=3, difficulty=1, empty_lines='0', uniqueness=True):
+    def __init__(self, size=3, difficulty=1, empty_lines=0, uniqueness=True):
         self._size = None
         self._length = None
         self.difficulty = difficulty
         self.empty_lines = empty_lines
         self.uniqueness = uniqueness
         
-        self.grid = Grid()
+        self.grid = Grid(empty_lines=empty_lines)
         self.max_size = 5
         self.size = size
 
@@ -296,6 +298,12 @@ class CreaGrid:
         self.grid.lines = lines 
         return self.grid
 
+    def empty(self, size=None):
+        size = tls.if_none(size, self.size)
+        lines = [[self.empty_lines for _ in range(size * size)] for _ in range(size * size)]
+        self.grid.lines = lines
+        return lines
+
     def status(self, text_clr=Color.BRIGHT_BLUE):
         status = (
             f"{clr('Size: ', text_clr):<30}{str(self.size)}\n"
@@ -304,6 +312,8 @@ class CreaGrid:
             f"{clr('Difficulty: ', text_clr):<30}{str(self.difficulty)}\n"
             f"{clr('Empty_lines: ', text_clr):<30}{str(self.empty_lines)}\n"
             f"{clr('Uniqueness: ', text_clr):<30}{str(self.uniqueness)}\n"
+            f"{clr('Lines', text_clr)}\n{str(self.grid.lines_to_str_status())}\n\n"
+            
         )
         return status
     
@@ -372,26 +382,37 @@ class Sdk:
 
     def init_show(self):
         vals = self.style.properties
+        size = self.grid.size
+        length = size * size
         # print(vals)
-        cp = ['' for _ in range(11)]
+        # print(self.grid.lines)
+        # print(self.grid.size)
+        # time.sleep(10)
+        cp = ['' for _ in range(length + size - 1)]
         off = 0
+        # print(vals)
+        cross_pos = [x * size * 2 - (1 if x % 2 == 1 else 0) for x in range(1, size)]
+        sep_pos = [x * size - 1 for x in range(1, size)]
+        sep_pos_2 = [x * size for x in range(1, size)]
         for i, l in enumerate(self.grid.lines):
-            if i == 3 or i == 6:
-                for j in range(19): 
-                    cp[i + off] += vals['sep_horz']
-                    if j == 5 or j == 12:
-                        cp[i + off] += vals['sep_cross']
+            a = i - 1
+            if i == size or i == size * 2 or i == size * 3:
+                for j in range(length * 2 + 1): 
+                    cp[i + off] += clr(vals['sep_horz'], vals['sep_clr'] + vals['bg'])
+                    if j in cross_pos:
+                        cp[i + off] += clr(vals['sep_cross'], vals['sep_clr'] + vals['bg'])
                 off += 1
+            # print(l)
             for x, n in enumerate(l):
-                if n == None:
-                    value = clr(' ', clrs.get_256_bg_clr_code(95))
+                if n == self.grid.empty_lines:
+                    value = clr(' ', vals['no_digit_clr'])
                 else:
                     value = str(n)
                 space = ' ' if x < len(l) - 1 else ''
-                # space = ' '
-                cp[i + off] += clr(value + space, vals['digit'])
-                if x == 2 or x == 5:
-                    cp[i + off] += vals['sep_vert'] + clr(' ', vals['digit'])
+                space = clr(space, vals['bg'])
+                cp[i + off] += clr(value, vals['digit']) + space
+                if x in sep_pos:
+                    cp[i + off] += clr(vals['sep_vert'], vals['sep_clr'] + vals['bg']) + space
         return cp
     
     def show(self):
@@ -471,8 +492,9 @@ class SdkHandler:
 
         return True
     
-    def modif_sdk(self, sdk, coord, new_value):
-        new_value = None if new_value == None else clr(str(new_value), clrs.get_256_bg_clr_code(219) + Color.BLACK + Color.BOLD)
+    def modif_sdk(self, sdk, coord, new_value, empty):
+        # new_value = empty if new_value == empty else clr(str(new_value), clrs.get_256_bg_clr_code(219) + Color.BLACK + Color.BOLD)
+        new_value = empty if new_value == empty else new_value
         sdk[coord[1]][coord[0]] = new_value
 
     def increment_2d(self, coord, inc, size_x, size_y):
@@ -481,27 +503,36 @@ class SdkHandler:
         if x > size_x - 1 or y > size_y - 1:
             return False
         return (x, y)            
-    
-    def solve_sdk(self, speed):
+
+    def solve_sdk(self, speed, rand=True):
         sdk = self.sdk.grid.lines
+        empty = self.sdk.grid.empty_lines
+        # print(sdk, empty)
+        
         coord = (0, 0)
-        coord = ds.find_from_in_2d_list(sdk, None, coord)
+        coord = ds.find_from_in_2d_list(sdk, 0, coord)
         if coord == False:
             print("\n" + clr('-------SUCCESS------', Color.BRIGHT_GREEN) + "\n")
             return True
         
-        for i in range(9):
-            self.modif_sdk(sdk, coord, i + 1)
+        test_values = list(range(self.sdk.grid.size ** 2))
+        if rand == True:
+            random.shuffle(test_values)
+        for i in test_values:
+            self.modif_sdk(sdk, coord, i + 1, empty)
             
             tls.clear_screen()
             
+            # print(self.sdk.grid.lines)
+            # time.sleep(1)
             self.sdk.show()
-            time.sleep(speed)
-            ret = CheckGrid.run_all(sdk, self.sdk.grid.empty_lines)
+            time.sleep(1 / speed)
+            
+            ret = CheckGrid.run_all(sdk, empty)
 
             if ret == True:
                 if self.solve_sdk(speed) == True:
                     return True
                 
-        self.modif_sdk(sdk, coord, None)
+        self.modif_sdk(sdk, coord, empty, empty)
         return False

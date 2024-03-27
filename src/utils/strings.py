@@ -1,8 +1,8 @@
     
     
-    # # print_sdk(sdk, **style['default'])
-    # print_sdk(sdk, **style['simple_margin'])
-    # print_sdk(sdk, **style['ocean'])
+#     # print_sdk(sdk, **style['default'])
+#     print_sdk(sdk, **style['simple_margin'])
+#     print_sdk(sdk, **style['ocean'])
     
 # def print_unicode_characters_columns(start=32, end=1000, column_count=5):
 #     """
@@ -74,99 +74,36 @@
 
 
 
-# def print_sudoku(sudoku):
-#     # Define box drawing characters
-#     horizontal_line = '\u2500'
-#     vertical_line = '\u2502'
-#     cross = '\u253C'
-#     top_left_corner = '\u250C'
-#     top_right_corner = '\u2510'
-#     bottom_left_corner = '\u2514'
-#     bottom_right_corner = '\u2518'
-#     t_down = '\u252C'
-#     t_up = '\u2534'
-#     t_left = '\u2524'
-#     t_right = '\u251C'
+# horizontal_line = '\u2500'
+# vertical_line = '\u2502'
+# cross = '\u253C'
+# top_left_corner = '\u250C'
+# top_right_corner = '\u2510'
+# bottom_left_corner = '\u2514'
+# bottom_right_corner = '\u2518'
+# t_down = '\u252C'
+# t_up = '\u2534'
+# t_left = '\u2524'
+# t_right = '\u251C'
+# print("├──────┼───────┼──────┤")
+# print("└──────┴───────┴──────┘")
 
-#     # Top border
-#     top_border = top_left_corner + (horizontal_line * 3 + t_down) * 2 + horizontal_line * 3 + top_right_corner
-#     # Bottom border
-#     bottom_border = bottom_left_corner + (horizontal_line * 3 + t_up) * 2 + horizontal_line * 3 + bottom_right_corner
-#     # Middle separator
-#     middle_separator = t_right + (horizontal_line * 3 + cross) * 2 + horizontal_line * 3 + t_left
-
-#     print(top_border)
-#     for i, row in enumerate(sudoku):
-#         # Print Sudoku numbers with vertical lines
-#         row_str = vertical_line + vertical_line.join(' '.join(row[j:j+3]) for j in range(0, 9, 3)) + vertical_line
-#         print(row_str)
-#         # Print separators between blocks and the bottom border
-#         if i % 3 == 2 and i < 8:
-#             print(middle_separator)
-#     print(bottom_border)
-
-# # Example usage
-# sudoku = [
-#     ['5', '3', '.', '.', '7', '.', '.', '.', '.'],
-#     ['6', '.', '.', '1', '9', '5', '.', '.', '.'],
-#     ['.', '9', '8', '.', '.', '.', '.', '6', '.'],
-#     ['8', '.', '.', '.', '6', '.', '.', '.', '3'],
-#     ['4', '.', '.', '8', '.', '3', '.', '.', '1'],
-#     ['7', '.', '.', '.', '2', '.', '.', '.', '6'],
-#     ['.', '6', '.', '.', '.', '.', '2', '8', '.'],
-#     ['.', '.', '.', '4', '1', '9', '.', '.', '5'],
-#     ['.', '.', '.', '.', '8', '.', '.', '7', '9']
-# ]
-
-# print_sudoku(sudoku)
-
-
-
-# def print_sudoku(sudoku):
-#     print("┌──────┬───────┬──────┐")
-#     for i, row in enumerate(sudoku):
-#         # Prepare the row for printing with the correct spacing and separators
-#         row_str = "│" + " ".join(str(cell) for cell in row[:3]) + " │ " + \
-#                   " ".join(str(cell) for cell in row[3:6]) + " │ " + \
-#                   " ".join(str(cell) for cell in row[6:]) + "│"
-                  
-#         print(row_str)
-        
-#         # Row dividers
-#         if (i + 1) % 3 == 0 and i < 8:
-#             print("├──────┼───────┼──────┤")
-#         elif i == 8:
-#             print("└──────┴───────┴──────┘")
-
-# sudoku = [
-#     ['5', '3', '.', '.', '7', '.', '.', '.', '.'],
-#     ['6', '.', '.', '1', '9', '5', '.', '.', '.'],
-#     ['.', '9', '8', '.', '.', '.', '.', '6', '.'],
-#     ['8', '.', '.', '.', '6', '.', '.', '.', '3'],
-#     ['4', '.', '.', '8', '.', '3', '.', '.', '1'],
-#     ['7', '.', '.', '.', '2', '.', '.', '.', '6'],
-#     ['.', '6', '.', '.', '.', '.', '2', '8', '.'],
-#     ['.', '.', '.', '4', '1', '9', '.', '.', '5'],
-#     ['.', '.', '.', '.', '8', '.', '.', '7', '9'],
-# ]
-
-# print_sudoku(sudoku)
 
 # # Print all printable ASCII characters
-    # for i in range(32, 127):
-    #     print(chr(i), end=' ')
-    # print()  # Move to a new line at the end
+#     for i in range(32, 127):
+#         print(chr(i), end=' ')
+#     print()  # Move to a new line at the end
     
-    # # Print all extended ASCII characters (might vary by terminal encoding)
-    # for i in range(128, 256):
-    #     print(chr(i), end=' ')
-    # print()  # Move to a new line at the end
+#     # Print all extended ASCII characters (might vary by terminal encoding)
+#     for i in range(128, 256):
+#         print(chr(i), end=' ')
+#     print()  # Move to a new line at the end
     
-    # # Print a range of Unicode characters
-    # for i in range(1024):
-    #     try:
-    #         print(chr(i), end=' ')
-    #     except UnicodeEncodeError:
-    #         pass  # Some characters may not be supported in the terminal's encoding
-    # print()  # Move to a new line at the end
+#     # Print a range of Unicode characters
+#     for i in range(1024):
+#         try:
+#             print(chr(i), end=' ')
+#         except UnicodeEncodeError:
+#             pass  # Some characters may not be supported in the terminal's encoding
+#     print()  # Move to a new line at the end
     

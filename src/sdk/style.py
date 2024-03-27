@@ -7,6 +7,12 @@ from utils import data_stuct as ds
 from utils import tools as tls
 
 
+
+# =============================================================================
+# My styles
+# =============================================================================
+
+
 styles = {
     'default': {
         'margin': 0,
@@ -31,36 +37,22 @@ styles = {
         'digit': Color.BRIGHT_CYAN,
         'no_digit': '.',
         'no_digit_clr': Color.BRIGHT_CYAN_BG,
+        'bg': Color.MAGENTA_BG
     },
       
-    'simple_margin': {
-        'indent': 5,
-        'top_margin': 3,
-        'bot_margin': 3,
-    },
-    
     'wood': {
         'indent': 5,
-        'top_margin': 3,
-        'bot_margin': 3,
-        'vert': '|',
-        'horz': '=',
-        'cross': 'x',
-        'sep_clr': clrs.get_256_clr_code(167),
-        'clr': clrs.get_256_bg_clr_code(95) + clrs.get_256_clr_code(230)
+        'margin_top': 3,
+        'margin_bot': 3,
+        'sep_vert': '|',
+        'sep_horz': '=',
+        'sep_cross': 'x',
+        'sep_clr': clrs.get_256_clr_code(52),
+        'digit': clrs.get_256_clr_code(230) + clrs.get_256_bg_clr_code(95),
+        'no_digit_clr': clrs.get_256_bg_clr_code(138),
+        'bg': clrs.get_256_bg_clr_code(95)
     },
-    
-    'ocean': {
-        'indent': 5,
-        'top_margin': 3,
-        'bot_margin': 3,
-        'vert': '|',
-        'horz': '~',
-        'cross': '+',
-        'sep_clr': clrs.get_256_clr_code(75) + Color.BOLD,
-        'clr': clrs.get_256_bg_clr_code(123) + clrs.get_256_clr_code(235) + Color.ITALIC
-    },
-    
+        
     'my_style': {
         'indent': 10,
         'margin_bot': 3,
@@ -76,15 +68,21 @@ styles = {
         'frame_right': ':',
         'frame_left': ':',
         'frame_clr': Color.BLUE,
-        'sep_vert': '|',
-        'sep_horz': '-',
-        'sep_cross': '+',
-        'sep_clr': Color.RED,
-        'digit': Color.BRIGHT_CYAN,
+        'sep_vert': '\u2502',
+        'sep_horz': '─',
+        'sep_cross': '┼',
+        'sep_clr': Color.YELLOW,
+        'digit': clrs.get_256_clr_code(125) + clrs.get_256_bg_clr_code(225),
         'no_digit': '.',
-        'no_digit_clr': Color.BRIGHT_CYAN_BG,
+        'no_digit_clr': clrs.get_256_bg_clr_code(218),
+        'bg': clrs.get_256_bg_clr_code(219),
     }
 }
+
+
+# =============================================================================
+# Style
+# =============================================================================
 
 
 class Style:
@@ -129,8 +127,10 @@ import termios
 import curses
 
 class CreateStyle:
-    def __init__(self):
-        pass
+    def __init__(self, name=None):
+        if name == None:
+            name = 'default'
+        self.name = name
         
     def getch(self):
         fd = sys.stdin.fileno()
@@ -153,7 +153,7 @@ class CreateStyle:
                 break
             
     def get_style(self):
-        return Style(**styles['my_style'])
+        return Style(**styles[self.name])
 
 # my_style = Style(**styles['my_style'])
 # my_style.show()
