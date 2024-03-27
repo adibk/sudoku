@@ -12,6 +12,9 @@ class TestCalculus(unittest.TestCase):
         self.max_test = 1_000_000_000_000
         self.nb_rand_test = 20
         
+    def test_perfect_sqrt_None(self):
+        self.assertEqual(calculus.perfect_sqrt(None), None)
+    
     def test_perfect_sqrt_sple_values(self):
         self.assertEqual(calculus.perfect_sqrt(1), 1)
         self.assertEqual(calculus.perfect_sqrt(0), 0)
@@ -34,7 +37,7 @@ class TestCalculus(unittest.TestCase):
 
     def test_perfect_sqrt_rand_fail(self):
         """Test calculus.perfect_sqrt with various invalid inputs that should all fail."""
-        invalid_inputs = ['string', 'c', None, (4,), {4}, [4], [1, 2, 3]]
+        invalid_inputs = ['string', 'c', (4,), {4}, [4], [1, 2, 3]]
 
         for input in invalid_inputs:
             with self.subTest(input_value=input):
