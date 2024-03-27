@@ -202,29 +202,41 @@ class CheckGrid:
         pass
     
     @staticmethod
-    def run(lines):
-        print(lines)
-        lines = ds.apply_funcs_to_lists(lines, [clrs.rm_clr, int], [None])
-        # print(lines)
-        # time.sleep(10)
+    def rows(lines, empty_line=0):
         for i, l in enumerate(lines):
-            if ds.has_duplicates(l, [None]):
-                # print(i, l, '\nligne FALSE')
+            if ds.has_duplicates(l, [empty_line]):
+                print(i, l, '\nligne FALSE')
                 return False
-            # else:
-            #     print(l)
-            
+        return True
+
+    @staticmethod
+    def cols(lines, empty_line=0):
         for y in range(9):
             col = [lines[x][y] for x in range(9)]
-            if ds.has_duplicates(col, [None]):
-                # print(i, col, '\ncol FALSE')
+            if ds.has_duplicates(col, [empty_line]):
+                print(y, col, '\ncol FALSE')
                 return False
+        return True
 
+    @staticmethod
+    def squares(lines, empty_line=0):
         for i in range(9):
             square = [lines[i - i % 3 + x][(i * 3) % 9 + y] for y in range(3) for x in range(3)]
-            if ds.has_duplicates(square, [None]):
-                # print(i, col, '\nsquare FALSE')
+            if ds.has_duplicates(square, [empty_line]):
+                # Debug
+                print(i, square, '\nsquare FALSE')
                 return False
+        return True
+    
+    @staticmethod
+    def run_all(lines, empty_line=0):
+        lines = ds.apply_funcs_to_lists(lines, [clrs.rm_clr, int], [None])
+
+        if (not CheckGrid.rows(lines, empty_line) or
+            not CheckGrid.cols(lines, empty_line) or
+            not CheckGrid.squares(lines, empty_line)):
+            return False
+        return True
 
 
 class CreaGrid:
@@ -297,6 +309,7 @@ class CreaGrid:
     
     def show_status(self, text_clr=Color.BRIGHT_BLUE):
         print(self.status(text_clr))
+
 
 
 # =============================================================================
@@ -396,6 +409,7 @@ class Sdk:
 # Sudoko Handler
 # =============================================================================
 
+
 class SdkHandler:
     def __init__(self, sdk=None):
         self._sdk = None 
@@ -421,7 +435,7 @@ class SdkHandler:
             raise TypeError(error_msg)
         self._sdk = new_sdk
         
-    def solve(self):
+    def solve(self, speed=0.01):
         if self.sdk == None:
             error_msg = (
                 f"unsupported use of `{self.solve.__name__}` method "
@@ -429,7 +443,7 @@ class SdkHandler:
             )
             raise TypeError(error_msg)
         print('\nsolving\n')
-        self.solve_sdk()
+        self.solve_sdk(speed)
         
     def is_valid_sdk(self, sdk):
         # print(sdk)
@@ -468,7 +482,7 @@ class SdkHandler:
             return False
         return (x, y)            
     
-    def solve_sdk(self):
+    def solve_sdk(self, speed):
         sdk = self.sdk.grid.lines
         coord = (0, 0)
         coord = ds.find_from_in_2d_list(sdk, None, coord)
@@ -482,12 +496,11 @@ class SdkHandler:
             tls.clear_screen()
             
             self.sdk.show()
-            ret = self.is_valid_sdk(sdk)
-            time.sleep(0.05)
-            
+            time.sleep(speed)
+            ret = CheckGrid.run_all(sdk, self.sdk.grid.empty_lines)
 
             if ret == True:
-                if self.solve_sdk() == True:
+                if self.solve_sdk(speed) == True:
                     return True
                 
         self.modif_sdk(sdk, coord, None)

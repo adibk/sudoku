@@ -40,41 +40,27 @@ def exit_main():
 def main():
     
     init_main()
-    
-    text = SdkExples_2.check['valid'][0]
-    grid = Grid(text, empty_lines=0)
-    
-    grid.show_status()
+        
+    crea = CreaGrid()
+    crea.rand()
+    crea.length = 16
+    crea.show_status()
 
-    if CheckGrid.run(grid.lines):
-        print('success')
-    else:
-        print('failure')
-        
-        
-    # crea = CreaGrid()
-    # crea.rand()
-    # crea.length = 16
-    # crea.show_status()
-    
-    # text = SdkExples_2.text['2x2_0'][0]
-    # grid = Grid(text)
-    
-    # grid.show_status()
-    # print(grid.text, grid.lines, grid.size, grid.length)
+    return    
+    text = SdkExples_2.solve['9x9_0_almost_empty'][0]
+    grid = Grid(text, empty_lines=None)
 
-    # crea = module_style.CreateStyle()
+    crea = module_style.CreateStyle()
         
-    # sdk = Sdk(grid, crea.get_style())
+    sdk = Sdk(grid, crea.get_style())
     # sdk.show_simple()
     # sdk.show()
     
-    # sdk_handler = SdkHandler()
-    # sdk_handler.sdk = sdk
-    # sdk_handler.solve()
+    sdk_handler = SdkHandler()
+    sdk_handler.sdk = sdk
+    sdk_handler.sdk.grid.show_status()
+    sdk_handler.solve(0.0001)
 
-    # sdk.show_simple()
-        
     exit_main()
     return
     
